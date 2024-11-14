@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ArtbavialFinance.Data;
+using ArtbavialMyFinance.Models;
 using ArtbavialFinance.Pages;
+using ArtbavialMyFinance.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace ArtbavialFinance
 {
@@ -17,11 +19,9 @@ namespace ArtbavialFinance
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-
-			// Настройка подключения к базе данных
-			var connectionString = "\"Server=mssql02.by2040.hb.by;packet size=4096;user id=artbavial;pwd=VITbar231089;data source=ArtbavialFinanceDB;persist security info=False;initial catalog=ArtbavialFinanceDB;";
-			builder.Services.AddDbContext<AppDbContext>(options =>
-				options.UseSqlServer(connectionString));
+;
+			// Регистрация DbContext без строки подключения
+			builder.Services.AddDbContext<AppDbContext>();
 
 			// Регистрация страниц
 			builder.Services.AddTransient<Pages.RegisterPage>();

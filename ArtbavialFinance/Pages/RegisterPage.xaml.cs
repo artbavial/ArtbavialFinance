@@ -1,6 +1,6 @@
-using ArtbavialFinance.Data;
-using ArtbavialFinance.Models;
+using ArtbavialMyFinance.Models;
 using Microsoft.EntityFrameworkCore;
+using ArtbavialMyFinance.Data;
 
 namespace ArtbavialFinance.Pages;
 

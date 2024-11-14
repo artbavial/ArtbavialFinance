@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using ArtbavialFinance.Data;
+using ArtBavialMyFinance.Data;
 
 namespace ArtbavialFinance
 {

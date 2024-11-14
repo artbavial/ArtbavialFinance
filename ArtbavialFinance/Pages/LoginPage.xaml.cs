@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
+using ArtbavialMyFinance.Data;
+using ArtbavialMyFinance.Models;
+
 using Microsoft.EntityFrameworkCore;
-using ArtbavialFinance.Data;
-using ArtbavialFinance.Models;
 
 namespace ArtbavialFinance.Pages
 {

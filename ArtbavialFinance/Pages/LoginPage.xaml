@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ArtbavialFinance.Pages.LoginPage">
 
+
     <StackLayout Padding="20">
         <Label Text="Login" FontSize="32" HorizontalOptions="Center" />
         
