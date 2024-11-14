@@ -1,25 +1,25 @@
-﻿namespace ArtbavialFinance
+﻿using Microsoft.Maui.Controls;
+using ArtbavialFinance.Models;
+
+namespace ArtbavialFinance
 {
-    public partial class MainPage : ContentPage
-    {
-        int count = 0;
+	public partial class MainPage : ContentPage
+	{
+		private readonly User _currentUser;
 
-        public MainPage()
-        {
-            InitializeComponent();
-        }
+		public MainPage(User currentUser)
+		{
+			InitializeComponent();
+			_currentUser = currentUser;
 
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
+			// Отображение информации о пользователе
+			UserInfoLabel.Text = $"Logged in as: {_currentUser.Username}";
+		}
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
-    }
-
+		private async void OnLogoutClicked(object sender, EventArgs e)
+		{
+			// Возвращаемся на страницу входа
+			await Navigation.PopToRootAsync(); // Возвращаемся на корневую страницу (LoginPage)
+		}
+	}
 }

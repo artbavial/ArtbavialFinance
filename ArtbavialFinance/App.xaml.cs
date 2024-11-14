@@ -1,12 +1,15 @@
-﻿namespace ArtbavialFinance
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
+﻿using Microsoft.Maui.Controls;
+using Microsoft.Extensions.DependencyInjection;
+using ArtbavialFinance.Data;
 
-            MainPage = new AppShell();
-        }
-    }
+namespace ArtbavialFinance
+{
+	public partial class App : Application
+	{
+		public App(IServiceProvider serviceProvider)
+		{
+			InitializeComponent();
+			MainPage = new NavigationPage(serviceProvider.GetRequiredService<Pages.LoginPage>()); // Получаем LoginPage из контейнера зависимостей
+		}
+	}
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ArtbavialFinance.Pages.LoginPage">
+
+    <StackLayout Padding="20">
+        <Label Text="Login" FontSize="32" HorizontalOptions="Center" />
+        
+        <Entry x:Name="UsernameEntry" Placeholder="Username" />
+        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" />
+        
+        <Button Text="Login" Clicked="OnLoginClicked" />
+        
+        <Label x:Name="MessageLabel" TextColor="Red" />
+    </StackLayout>
+</ContentPage>
