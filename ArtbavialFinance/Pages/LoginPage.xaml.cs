@@ -1,9 +1,10 @@
+using ArtbavialFinance.Pages;
+using ArtbavialFinance;
+using ArtbavialMyFinance.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using ArtbavialMyFinance.Data;
-using ArtbavialMyFinance.Models;
-
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ArtbavialFinance.Pages
 {
@@ -26,12 +27,18 @@ namespace ArtbavialFinance.Pages
 			if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
 			{
 				// Успешная авторизация, перенаправляем на MainPage
-				await Navigation.PushAsync(new MainPage(user));
+				await Navigation.PushAsync(new MainPage(user)); // Передаем текущего пользователя в MainPage
 			}
 			else
 			{
 				MessageLabel.Text = "Invalid username or password.";
 			}
+		}
+
+		private async void OnRegisterButtonClicked(object sender, EventArgs e)
+		{
+			// Переход на страницу регистрации
+			await Navigation.PushAsync(new RegisterPage(_dbContext));
 		}
 	}
 }
