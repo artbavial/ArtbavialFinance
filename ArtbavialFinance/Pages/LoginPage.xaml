@@ -1,12 +1,58 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ArtbavialFinance.Pages.LoginPage">
-    <StackLayout>
-        <Entry x:Name="UsernameEntry" Placeholder="Username" />
-        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" />
-        <Button Text="Login" Clicked="OnLoginClicked" />
-        <Button Text="Register" Clicked="OnRegisterButtonClicked" />
-        <!-- Добавляем кнопку регистрации -->
-        <Label x:Name="MessageLabel" TextColor="Red" />
+    <StackLayout
+        Padding="10"
+        VerticalOptions="CenterAndExpand"
+        Spacing="{OnPlatform iOS=20, Android=15, WinUI=10}">
+
+        <!-- Название приложения -->
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <FormattedString.Spans>
+                        <Span Text="ArtBavial"
+                              TextColor="White"
+                              FontSize="72" />
+                        <!-- Тройной размер шрифта -->
+                        <Span Text=" "
+                              FontSize="72" />
+                        <Span Text="Finance"
+                              TextColor="LightGreen"
+                              FontSize="72" />
+                        <!-- Тройной размер шрифта -->
+                    </FormattedString.Spans>
+                </FormattedString>
+            </Label.FormattedText>
+            <Label.HorizontalOptions>Center</Label.HorizontalOptions>
+            <Label.VerticalOptions>Center</Label.VerticalOptions>
+            <Label.Margin>0,30,0,30</Label.Margin>
+        </Label>
+
+        <Entry x:Name="UsernameEntry"
+               Placeholder="Username"
+               WidthRequest="{OnPlatform iOS=300, Android=250, WinUI=400}"
+               HorizontalOptions="Center" />
+
+        <Entry x:Name="PasswordEntry"
+               Placeholder="Password"
+               IsPassword="True"
+               WidthRequest="{OnPlatform iOS=300, Android=250, WinUI=400}"
+               HorizontalOptions="Center" />
+
+        <Button Text="Login"
+                Clicked="OnLoginClicked"
+                WidthRequest="{OnPlatform iOS=200, Android=200, WinUI=300}"
+                HorizontalOptions="Center" />
+
+        <Button Text="Register"
+                Clicked="OnRegisterButtonClicked"
+                WidthRequest="{OnPlatform iOS=200, Android=200, WinUI=300}"
+                HorizontalOptions="Center" />
+
+        <Label x:Name="MessageLabel"
+               TextColor="Red"
+               HorizontalOptions="Center"
+               WidthRequest="{OnPlatform iOS=300, Android=250, WinUI=400}" />
     </StackLayout>
 </ContentPage>

@@ -1,10 +1,9 @@
-using ArtbavialFinance.Pages;
-using ArtbavialFinance;
-using ArtbavialMyFinance.Data;
+using ArtbavialMyFinance.Data; // ¬осстановлено пространство имен
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
 
 namespace ArtbavialFinance.Pages
 {
@@ -20,25 +19,39 @@ namespace ArtbavialFinance.Pages
 
 		private async void OnLoginClicked(object sender, EventArgs e)
 		{
-			var username = UsernameEntry.Text;
-			var password = PasswordEntry.Text;
+			try
+			{
+				var username = UsernameEntry.Text;
+				var password = PasswordEntry.Text;
 
-			var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
-			if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-			{
-				// ”спешна€ авторизаци€, перенаправл€ем на MainPage
-				await Navigation.PushAsync(new MainPage(user)); // ѕередаем текущего пользовател€ в MainPage
+				var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
+				if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+				{
+					// ”спешна€ авторизаци€, устанавливаем MainPage как корневую страницу
+					Application.Current.MainPage = new NavigationPage(new MainPage(user));
+				}
+				else
+				{
+					MessageLabel.Text = "Invalid username or password.";
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				MessageLabel.Text = "Invalid username or password.";
+				await DisplayAlert("Error", ex.Message, "OK");
 			}
 		}
 
 		private async void OnRegisterButtonClicked(object sender, EventArgs e)
 		{
-			// ѕереход на страницу регистрации
-			await Navigation.PushAsync(new RegisterPage(_dbContext));
+			try
+			{
+				// ѕереход на страницу регистрации
+				await Navigation.PushAsync(new RegisterPage(_dbContext));
+			}
+			catch (Exception ex)
+			{
+				await DisplayAlert("Error", ex.Message, "OK");
+			}
 		}
 	}
 }
