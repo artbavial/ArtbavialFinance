@@ -1,52 +1,63 @@
-﻿using ArtBavialMyFinance.Data.Models;
+﻿using ArtbavialFinance.Models;
+using ArtBavialMyFinance.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ArtbavialMyFinance.Models
+namespace ArtBavialMyFinance.Models
 {
-
 	/// <summary>
-	/// Модель для представления счета.
+	/// Класс для представления счета пользователя
 	/// </summary>
 	public class Account
 	{
 		/// <summary>
-		/// Уникальный идентификатор счета.
+		/// Идентификатор счета
 		/// </summary>
+		[Key]
 		public long Id { get; set; }
 
 		/// <summary>
-		/// Название счета.
+		/// Название счета
 		/// </summary>
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Баланс счета.
+		/// Баланс на счету
 		/// </summary>
 		public decimal Balance { get; set; }
 
 		/// <summary>
-		/// Идентификатор валюты счета.
+		/// Идентификатор валюты
 		/// </summary>
 		public long CurrencyId { get; set; }
 
 		/// <summary>
-		/// Связанная валюта счета.
+		/// Связь с валютой
 		/// </summary>
 		public Currency Currency { get; set; }
 
 		/// <summary>
-		/// Тип счета (например, "Наличные", "Банковская карта", "Вклад").
+		/// Является ли этот счет основным
 		/// </summary>
-		public AccountType Type { get; set; }  // Добавлен enum для типа счета
+		public bool IsPrimaryAccount
+		{
+			get; set;
+		}
 
 		/// <summary>
-		/// Является ли счет главным
+		/// Тип счета
 		/// </summary>
-		public bool IsPrimaryAccount { get; set; }
-	}
+		public AccountType Type { get; set; }
+		/// <summary>
+		/// Идентификатор пользователя, владельца счета
+		/// </summary>
+		public long UserId { get; set; }
 
+		/// <summary>
+		/// Связь с пользователем
+		/// </summary>
+		public User User { get; set; }
+	}
 }

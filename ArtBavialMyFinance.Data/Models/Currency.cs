@@ -1,38 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ArtbavialFinance.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace ArtbavialMyFinance.Models
+namespace ArtBavialMyFinance.Models
 {
+	/// <summary>
+	/// Класс для представления валюты
+	/// </summary>
 	public class Currency
 	{
-		public long Id { get; set; } //  Идентификатор Валюты
+		/// <summary>
+		/// Идентификатор валюты
+		/// </summary>
+		[Key]
+		public long Id { get; set; }
+
 
 		/// <summary>
-		/// Название валюты
-		/// </summary>	
+		/// Код валюты (например, USD, EUR)
+		/// </summary>
+		public string CodeCurrency { get; set; }
+
+		/// <summary>
+		/// Название валюты (например, Доллар, Евро)
+		/// </summary>
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Код валюты
+		/// Символ валюты (например, $, €)
 		/// </summary>
-		public string CodeCurrency { get; set; } // Название валюты (например, "USD", "EUR")
+		public string Symbol { get; set; }
 
 		/// <summary>
-		/// Символ валюты
+		/// Курс обмена относительно базовой валюты
 		/// </summary>
-		public string Symbol { get; set; } // Символ валюты (например, "$", "€")
+		public decimal ExchangeRate { get; set; }
 
 		/// <summary>
-		/// Является ли валюта базовой
+		/// Признак базовой валюты
 		/// </summary>
 		public bool IsBaseCurrency { get; set; }
 
 		/// <summary>
-		/// Курс валюты относительно базовой валюты
+		/// Идентификатор пользователя, владельца валюты
 		/// </summary>
-		public decimal ExchangeRate { get; set; } // Курс валюты относительно базовой валюты
+		public long UserId { get; set; }
+
+		/// <summary>
+		/// Связь с пользователем
+		/// </summary>
+		public User User { get; set; }
 	}
 }

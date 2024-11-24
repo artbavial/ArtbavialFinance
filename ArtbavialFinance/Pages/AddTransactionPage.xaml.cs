@@ -1,7 +1,7 @@
 using System;
-using ArtbavialMyFinance.Data;
-using ArtbavialMyFinance.Models;
+using ArtBavialMyFinance.Data;
 using ArtBavialMyFinance.Data.Models;
+using ArtBavialMyFinance.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Maui.Controls;
 

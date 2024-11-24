@@ -14,10 +14,9 @@
         ContentTemplate="{DataTemplate data:MainPage}"
         Route="MainPage" />
     <ShellContent
-        Title="Add Account"
-        ContentTemplate="{DataTemplate pages:AddAccountPage}"
-        Route="addaccount" />
-
-
+        Title="Currencies"
+        ContentTemplate="{DataTemplate pages:ManageCurrenciesPage}"
+        Route="currencies" />
 
 </Shell>
+

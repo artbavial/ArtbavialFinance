@@ -4,21 +4,32 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
-using ArtbavialMyFinance.Models;
 using ArtBavialMyFinance.Data.Models;
 using ArtbavialFinance.Pages;
+using System.Windows.Input;
+using ArtBavialMyFinance.Data;
+using ArtbavialFinance.Models;
 
 namespace ArtBavialFinance
 {
 	public partial class MainPage : ContentPage
 	{
 		private readonly AppDbContext _dbContext;
-
-		public MainPage(AppDbContext dbContext)
+		public User CurrentUser { get; private set; }
+		public ICommand NavigateCommand { get; private set; }
+		public MainPage(AppDbContext dbContext, User user)
 		{
 			InitializeComponent();
+			NavigateCommand = new Command<string>(OnNavigate);
+			BindingContext = this;
 			_dbContext = dbContext;
+			CurrentUser = user;
 			LoadDashboardData();
+		}
+
+		private async void OnNavigate(string route)
+		{
+			await Shell.Current.GoToAsync(route);
 		}
 
 		private async void LoadDashboardData()
@@ -44,7 +55,7 @@ namespace ArtBavialFinance
 
 		private async void OnAddAccountClicked(object sender, EventArgs e)
 		{
-			await Navigation.PushAsync(new AddAccountPage(_dbContext));
+			await Navigation.PushAsync(new AddAccountPage(_dbContext, CurrentUser));
 		}
 
 		private async void OnAddTransactionClicked(object sender, EventArgs e)

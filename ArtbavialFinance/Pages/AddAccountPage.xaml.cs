@@ -1,22 +1,25 @@
-using ArtbavialMyFinance.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
-using ArtbavialMyFinance.Models;
 using ArtBavialMyFinance.Data.Models;
+using ArtBavialMyFinance.Models;
+using ArtBavialMyFinance.Data;
+using ArtbavialFinance.Models;
 
 namespace ArtbavialFinance.Pages
 {
 	public partial class AddAccountPage : ContentPage
 	{
 		private readonly AppDbContext _dbContext;
+		private User currentUser;
 
-		public AddAccountPage(AppDbContext dbContext)
+		public AddAccountPage(AppDbContext dbContext, User user)
 		{
 			InitializeComponent();
 			_dbContext = dbContext;
+			currentUser = user; // Установка текущего пользователя
 			LoadAccountTypes();
 		}
 
@@ -24,7 +27,10 @@ namespace ArtbavialFinance.Pages
 		{
 			if (_dbContext != null)
 			{
-				var currencies = await _dbContext.Currencies.ToListAsync();
+				var currencies = await _dbContext.Currencies
+												 .Where(c => c.UserId == currentUser.Id) // Фильтруем валюты по текущему пользователю
+												 .Include(c => c.User) // Используем Include для загрузки связанных данных
+												 .ToListAsync();
 				CurrencyPicker.ItemsSource = currencies;
 				CurrencyPicker.ItemDisplayBinding = new Binding("Name");
 			}
@@ -60,7 +66,7 @@ namespace ArtbavialFinance.Pages
 				if (isPrimaryAccount)
 				{
 					var existingPrimaryAccount = await _dbContext.Accounts
-						.Where(a => a.IsPrimaryAccount)
+						.Where(a => a.IsPrimaryAccount && a.UserId == currentUser.Id) // Убедимся, что проверяем счета текущего пользователя
 						.FirstOrDefaultAsync();
 
 					if (existingPrimaryAccount != null)
@@ -87,7 +93,8 @@ namespace ArtbavialFinance.Pages
 					Balance = balance,
 					CurrencyId = selectedCurrency.Id,
 					Type = selectedAccountType,
-					IsPrimaryAccount = isPrimaryAccount
+					IsPrimaryAccount = isPrimaryAccount,
+					UserId = currentUser.Id // Установите UserId для нового счета
 				};
 
 				_dbContext.Accounts.Add(account);
@@ -107,7 +114,7 @@ namespace ArtbavialFinance.Pages
 		private async void OnAddCurrencyClicked(object sender, EventArgs e)
 		{
 			// Переход на страницу добавления валюты
-			await Navigation.PushAsync(new AddCurrencyPage(_dbContext));
+			await Navigation.PushAsync(new AddCurrencyPage(_dbContext, currentUser));
 		}
 	}
 }

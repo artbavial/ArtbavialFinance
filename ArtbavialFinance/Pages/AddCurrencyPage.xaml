@@ -45,7 +45,7 @@
         </StackLayout>
 
         <Button Text="Add Currency"
-                Clicked="OnAddAccountClicked"
+                Clicked="OnAddCurrencyClicked"
                 WidthRequest="{OnPlatform iOS=200, Android=200, MacCatalyst=200, WinUI=200}"
                 HorizontalOptions="Center" />
 

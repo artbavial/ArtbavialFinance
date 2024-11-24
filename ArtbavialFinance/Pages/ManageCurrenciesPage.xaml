@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ArtbavialFinance.Pages.ManageCurrenciesPage"
+             Title="Manage Currencies">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <!-- Заголовок страницы -->
+        <Label Text="Manage Currencies"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <!-- Список валют -->
+        <ListView x:Name="CurrencyListView" ItemSelected="OnCurrencySelected">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding Name}" Detail="{Binding Code}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Поля для добавления/редактирования валюты -->
+
+        <Entry Placeholder="Currency Code for Exchange (e.g., USD)"
+               x:Name="CurrencyCodeCurrencyEntry" />
+        <Entry Placeholder="Currency Name (e.g., Dollar)"
+               x:Name="CurrencyNameEntry" />
+        <Entry Placeholder="Currency Symbol (e.g., $)"
+               x:Name="CurrencySymbolEntry" />
+        <Entry Placeholder="Exchange Rate"
+               Keyboard="Numeric"
+               x:Name="ExchangeRateEntry" />
+        <Picker Title="Select Base Currency"
+                x:Name="BaseCurrencyPicker">
+            <!-- Здесь будут отображаться базовые валюты пользователя -->
+        </Picker>
+
+        <!-- Кнопки для добавления/сохранения валюты -->
+        <Button Text="Add Currency"
+                Clicked="OnAddCurrencyClicked"
+                BackgroundColor="DodgerBlue"
+                TextColor="White" />
+        <Button Text="Save Changes"
+                Clicked="OnSaveCurrencyChangesClicked"
+                BackgroundColor="Green"
+                TextColor="White"
+                IsVisible="False"
+                x:Name="SaveChangesButton" />
+    </VerticalStackLayout>
+</ContentPage>

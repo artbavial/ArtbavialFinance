@@ -70,6 +70,10 @@
                             Command="{Binding NavigateCommand}"
                             CommandParameter="settings"
                             Style="{StaticResource DefaultButtonStyle}" />
+                    <Button Text="Currencies"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Currencies"
+                            Style="{StaticResource DefaultButtonStyle}" />
                 </StackLayout>
             </StackLayout>
         </ScrollView>

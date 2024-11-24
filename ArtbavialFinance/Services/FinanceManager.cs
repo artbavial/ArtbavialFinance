@@ -1,116 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ArtbavialMyFinance.Models;
-using ArtBavialMyFinance.Data.Models;
+using ArtbavialFinance.Models;
+using ArtBavialMyFinance.Models;
 
-namespace ArtbavialFinance.Services
+namespace ArtBavialMyFinance.Services
 {
 	public class FinanceManager
 	{
+		private List<User> Users { get; set; }
+		private List<Currency> Currencies { get; set; }
 		private List<Account> Accounts { get; set; }
 		private List<Transaction> Transactions { get; set; }
 
 		public FinanceManager()
 		{
+			Users = new List<User>();
+			Currencies = new List<Currency>();
 			Accounts = new List<Account>();
 			Transactions = new List<Transaction>();
 		}
-		/// <summary>
-		/// Метод для перевода средств между счетами
-		/// </summary>
-		/// <param name="fromAccountId"></param>
-		/// <param name="toAccountId"></param>
-		/// <param name="amount"></param>
-		/// <param name="exchangeRate"></param>
-		/// <exception cref="Exception"></exception>
-		public void TransferFunds(long fromAccountId, long toAccountId, decimal amount, decimal? exchangeRate = null)
+
+		public void AddUser(User user)
 		{
-			var fromAccount = Accounts.FirstOrDefault(a => a.Id == fromAccountId);
-			var toAccount = Accounts.FirstOrDefault(a => a.Id == toAccountId);
+			user.Id = Users.Count > 0 ? Users.Max(u => u.Id) + 1 : 1;
+			Users.Add(user);
+		}
 
-			if (fromAccount == null || toAccount == null)
+		public void AddAccountToUser(long userId, Account account)
+		{
+			var user = Users.FirstOrDefault(u => u.Id == userId);
+			if (user != null)
 			{
-				throw new Exception("Один из счетов не найден.");
-			}
-
-			if (fromAccount.CurrencyId == toAccount.CurrencyId)
-			{
-				// Обычный перевод
-				if (fromAccount.Balance >= amount)
-				{
-					fromAccount.Balance -= amount;
-					toAccount.Balance += amount;
-					LogTransaction(fromAccountId, amount, TransactionType.Transfer, "Перевод на счет " + toAccount.Name);
-				}
-				else
-				{
-					throw new Exception("Недостаточно средств на счете.");
-				}
+				account.Id = user.Accounts.Count > 0 ? user.Accounts.Max(a => a.Id) + 1 : 1;
+				account.UserId = userId;
+				user.Accounts.Add(account);
 			}
 			else
 			{
-				// Перевод между счетами с разными валютами
-				if (exchangeRate.HasValue)
-				{
-					decimal convertedAmount = ConvertCurrency(amount, exchangeRate.Value);
-					if (fromAccount.Balance >= amount)
-					{
-						fromAccount.Balance -= amount;
-						toAccount.Balance += convertedAmount;
-						LogTransaction(fromAccountId, amount, TransactionType.Transfer, "Перевод на счет " + toAccount.Name);
-					}
-					else
-					{
-						throw new Exception("Недостаточно средств на счете.");
-					}
-				}
-				else
-				{
-					throw new Exception("Необходимо указать курс обмена для перевода между разными валютами.");
-				}
+				throw new Exception("User not found.");
 			}
 		}
 
-		// Метод для конвертации валюты
-		private decimal ConvertCurrency(decimal amount, decimal exchangeRate)
+		public void AddTransactionToUser(long userId, Transaction transaction)
 		{
-			return amount * exchangeRate; // Конвертация суммы по заданному курсу
-		}
-
-		// Метод для регистрации транзакции
-		private void LogTransaction(long accountId, decimal amount, TransactionType type, string description)
-		{
-			Transactions.Add(new Transaction
+			var user = Users.FirstOrDefault(u => u.Id == userId);
+			if (user != null)
 			{
-				Id = Transactions.Count + 1, // Можно изменить на более надежный способ генерации Id
-				AccountId = accountId,
-				Amount = amount,
-				Date = DateTime.Now,
-				Type = type,
-				Description = description
-			});
+				transaction.Id = user.Transactions.Count > 0 ? user.Transactions.Max(t => t.Id) + 1 : 1;
+				transaction.UserId = userId;
+				user.Transactions.Add(transaction);
+			}
+			else
+			{
+				throw new Exception("User not found.");
+			}
 		}
 
-		// Метод для добавления нового счета
-		public void AddAccount(Account account)
+		public void AddCurrencyToUser(long userId, Currency currency)
 		{
-			account.Id = Accounts.Count > 0 ? Accounts.Max(a => a.Id) + 1 : 1; // Генерация Id
-			Accounts.Add(account);
+			var user = Users.FirstOrDefault(u => u.Id == userId);
+			if (user != null)
+			{
+				currency.Id = user.Accounts.Count > 0 ? user.Accounts.Max(c => c.Id) + 1 : 1;
+				currency.UserId = userId;
+				Currencies.Add(currency);
+			}
+			else
+			{
+				throw new Exception("User not found.");
+			}
 		}
 
-		// Метод для получения всех счетов
-		public List<Account> GetAccounts()
+		public List<Currency> GetUserCurrencies(long userId)
 		{
-			return Accounts;
-		}
-
-		// Метод для получения всех транзакций
-		public List<Transaction> GetTransactions()
-		{
-			return Transactions;
+			return Currencies.Where(c => c.UserId == userId).ToList();
 		}
 	}
 }
