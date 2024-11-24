@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ArtbavialFinance.Pages.AddTransactionPage"
+             Title="Add Transaction">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <!-- Заголовок страницы -->
+        <Label Text="Add New Transaction"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <!-- Поле для ввода суммы -->
+        <Entry Placeholder="Enter Amount"
+               Keyboard="Numeric"
+               x:Name="AmountEntry" />
+
+        <!-- Выбор типа транзакции -->
+        <Picker Title="Select Transaction Type"
+                x:Name="TransactionTypePicker">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Income</x:String>
+                    <x:String>Expense</x:String>
+                    <x:String>Transfer</x:String>
+                    <x:String>Investment</x:String>
+                    <x:String>Withdrawal</x:String>
+                    <x:String>Deposit</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+
+        <!-- Поле для ввода описания -->
+        <Editor Placeholder="Enter Description"
+                AutoSize="TextChanges"
+                x:Name="DescriptionEditor" />
+
+        <!-- Кнопка для сохранения транзакции -->
+        <Button Text="Save Transaction"
+                BackgroundColor="DodgerBlue"
+                TextColor="White"
+                Clicked="OnSaveTransactionClicked" />
+    </VerticalStackLayout>
+</ContentPage>

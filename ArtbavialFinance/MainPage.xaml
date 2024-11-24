@@ -1,15 +1,86 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ArtbavialFinance.MainPage">
+             x:Class="ArtBavialFinance.MainPage"
+             Title="Dashboard">
 
-    <StackLayout Padding="20">
-        <Label Text="Welcome to Artbavial Finance" FontSize="32" HorizontalOptions="Center" />
+    <AbsoluteLayout>
+        <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="SizeProportional">
+            <StackLayout Padding="10" Spacing="20">
+                <!-- Заголовок -->
+                <Label Text="Welcome to Your Dashboard"
+                       FontSize="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Start"
+                       TextColor="LightGreen" />
 
-        <!-- Отображение информации о текущем пользователе -->
-        <Label x:Name="UserInfoLabel" FontSize="24" HorizontalOptions="Center" />
+                <!-- Баланс -->
+                <Frame BackgroundColor="White" BorderColor="Black" CornerRadius="10" Padding="20">
+                    <StackLayout>
+                        <Label Text="Total Balance"
+                               FontSize="18"
+                               HorizontalOptions="Center"
+                               TextColor="Black" />
+                        <Label x:Name="TotalBalanceLabel"
+                               FontSize="36"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="Green" />
+                    </StackLayout>
+                </Frame>
 
-        <Button Text="Logout" Clicked="OnLogoutClicked" />
-    </StackLayout>
+                <!-- Последние транзакции -->
+                <Frame BackgroundColor="White" BorderColor="Black" CornerRadius="10" Padding="20">
+                    <StackLayout>
+                        <Label Text="Recent Transactions"
+                               FontSize="18"
+                               TextColor="Black" />
+                        <ListView x:Name="TransactionsListView">
+                            <!-- Здесь будут отображаться последние транзакции -->
+                        </ListView>
+                    </StackLayout>
+                </Frame>
 
+                <!-- Быстрые действия -->
+                <Frame BorderColor="Black" CornerRadius="10" Padding="20">
+                    <StackLayout Orientation="Horizontal" Spacing="20" HorizontalOptions="Center">
+                        <Button Text="Add Account"
+                                Clicked="OnAddAccountClicked"
+                                Style="{StaticResource DefaultButtonStyle}" />
+                        <Button Text="Add Transaction"
+                                Clicked="OnAddTransactionClicked"
+                                Style="{StaticResource DefaultButtonStyle}" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Меню -->
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20" Padding="10">
+                    <Button Text="Dashboard"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="dashboard"
+                            Style="{StaticResource DefaultButtonStyle}" />
+                    <Button Text="Accounts"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="accounts"
+                            Style="{StaticResource DefaultButtonStyle}" />
+                    <Button Text="Transactions"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="transactions"
+                            Style="{StaticResource DefaultButtonStyle}" />
+                    <Button Text="Settings"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="settings"
+                            Style="{StaticResource DefaultButtonStyle}" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Плавающая кнопка действия -->
+        <Button Text="+"
+                Clicked="OnAddTransactionClicked"
+                FontSize="Body"
+                Style="{StaticResource FabButtonStyle}"
+                AbsoluteLayout.LayoutBounds="1,1"
+                AbsoluteLayout.LayoutFlags="PositionProportional" 
+                Margin="20"/>
+    </AbsoluteLayout>
 </ContentPage>

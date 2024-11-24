@@ -16,6 +16,10 @@ namespace ArtbavialMyFinance.Data
 
 		public DbSet<User> Users { get; set; }
 
+		public DbSet<Account> Accounts { get; set; }
+		public DbSet<Currency> Currencies { get; set; }
+		public DbSet<Transaction> Transactions { get; set; }
+
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			if (!optionsBuilder.IsConfigured)

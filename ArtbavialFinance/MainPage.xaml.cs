@@ -1,25 +1,55 @@
-﻿using Microsoft.Maui.Controls;
+﻿using ArtbavialMyFinance.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
 using ArtbavialMyFinance.Models;
+using ArtBavialMyFinance.Data.Models;
+using ArtbavialFinance.Pages;
 
-namespace ArtbavialFinance
+namespace ArtBavialFinance
 {
 	public partial class MainPage : ContentPage
 	{
-		private readonly User _currentUser;
+		private readonly AppDbContext _dbContext;
 
-		public MainPage(User currentUser)
+		public MainPage(AppDbContext dbContext)
 		{
 			InitializeComponent();
-			_currentUser = currentUser;
-
-			// Отображение информации о пользователе
-			UserInfoLabel.Text = $"Logged in as: {_currentUser.Username}";
+			_dbContext = dbContext;
+			LoadDashboardData();
 		}
 
-		private async void OnLogoutClicked(object sender, EventArgs e)
+		private async void LoadDashboardData()
 		{
-			// Возвращаемся на страницу входа
-			await Navigation.PopToRootAsync(); // Возвращаемся на корневую страницу (LoginPage)
+			await LoadTotalBalance();
+			await LoadRecentTransactions();
+		}
+
+		private async Task LoadTotalBalance()
+		{
+			var totalBalance = await _dbContext.Accounts.SumAsync(a => a.Balance);
+			TotalBalanceLabel.Text = $"{totalBalance:F2} USD"; // Здесь вы можете изменить валюту на нужную
+		}
+
+		private async Task LoadRecentTransactions()
+		{
+			var transactions = await _dbContext.Transactions
+												.OrderByDescending(t => t.Date)
+												.Take(10)
+												.ToListAsync();
+			TransactionsListView.ItemsSource = transactions;
+		}
+
+		private async void OnAddAccountClicked(object sender, EventArgs e)
+		{
+			await Navigation.PushAsync(new AddAccountPage(_dbContext));
+		}
+
+		private async void OnAddTransactionClicked(object sender, EventArgs e)
+		{
+			await Navigation.PushAsync(new AddTransactionPage(_dbContext));
 		}
 	}
 }

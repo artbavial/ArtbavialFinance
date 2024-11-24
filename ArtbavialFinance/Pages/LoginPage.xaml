@@ -30,11 +30,13 @@
         </Label>
 
         <Entry x:Name="UsernameEntry"
+               Text="admin"
                Placeholder="Username"
                WidthRequest="{OnPlatform iOS=300, Android=250, WinUI=400}"
                HorizontalOptions="Center" />
 
         <Entry x:Name="PasswordEntry"
+               Text="VITbar231089"
                Placeholder="Password"
                IsPassword="True"
                WidthRequest="{OnPlatform iOS=300, Android=250, WinUI=400}"
@@ -43,12 +45,14 @@
         <Button Text="Login"
                 Clicked="OnLoginClicked"
                 WidthRequest="{OnPlatform iOS=200, Android=200, WinUI=300}"
-                HorizontalOptions="Center" />
+                HorizontalOptions="Center"
+                Style="{StaticResource DefaultButtonStyle}"/>
 
         <Button Text="Register"
                 Clicked="OnRegisterButtonClicked"
                 WidthRequest="{OnPlatform iOS=200, Android=200, WinUI=300}"
-                HorizontalOptions="Center" />
+                HorizontalOptions="Center"
+                Style="{StaticResource DefaultButtonStyle}"/>
 
         <Label x:Name="MessageLabel"
                TextColor="Red"

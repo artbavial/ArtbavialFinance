@@ -1,0 +1,68 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ArtbavialFinance.Pages.AddAccountPage">
+    <StackLayout
+        Padding="{OnPlatform iOS='20,40', Android='10,20', MacCatalyst='20,40', WinUI='20,40'}"
+        VerticalOptions="CenterAndExpand"
+        Spacing="{OnPlatform iOS=20, Android=15, MacCatalyst=20, WinUI=20}">
+
+        <Label Text="Add New Account"
+               FontSize="{OnIdiom Phone=24, Tablet=30, Desktop=36}"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
+               TextColor="Black"
+               Margin="0,0,0,20" />
+
+        <Entry x:Name="AccountNameEntry"
+               Placeholder="Account Name"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+               HorizontalOptions="Center" />
+
+        <Entry x:Name="BalanceEntry"
+               Placeholder="Balance"
+               Keyboard="Numeric"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+               HorizontalOptions="Center" />
+
+        <Grid WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+              HorizontalOptions="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Picker x:Name="CurrencyPicker"
+                    Title="Select Currency"
+                    Grid.Column="0"
+                    Margin="0,0,10,0" />
+
+            <Button Text="Add Currency"
+                    Clicked="OnAddCurrencyClicked"
+                    Grid.Column="1" />
+        </Grid>
+
+        <Picker x:Name="AccountTypePicker"
+                Title="Select Account Type"
+                WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+                HorizontalOptions="Center">
+            <!-- Типы счетов будут загружены программно -->
+        </Picker>
+
+        <StackLayout Orientation="Horizontal"
+                     HorizontalOptions="Center">
+            <CheckBox x:Name="PrimaryAccountCheckbox" />
+            <Label Text="Is Primary Account"
+                   VerticalOptions="Center" />
+        </StackLayout>
+
+        <Button Text="Add Account"
+                Clicked="OnAddAccountClicked"
+                WidthRequest="{OnPlatform iOS=200, Android=200, MacCatalyst=200, WinUI=200}"
+                HorizontalOptions="Center" />
+
+        <Label x:Name="MessageLabel"
+               TextColor="Red"
+               HorizontalOptions="Center"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}" />
+    </StackLayout>
+</ContentPage>

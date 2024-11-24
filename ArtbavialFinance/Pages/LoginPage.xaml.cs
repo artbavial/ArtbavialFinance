@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using ArtBavialFinance;
 
 namespace ArtbavialFinance.Pages
 {
@@ -28,7 +29,7 @@ namespace ArtbavialFinance.Pages
 				if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
 				{
 					// Успешная авторизация, устанавливаем MainPage как корневую страницу
-					Application.Current.MainPage = new NavigationPage(new MainPage(user));
+					Application.Current.MainPage = new NavigationPage(new MainPage(_dbContext));
 				}
 				else
 				{

@@ -1,0 +1,57 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ArtbavialFinance.Pages.AddCurrencyPage">
+    <StackLayout
+        Padding="{OnPlatform iOS='20,40', Android='10,20', MacCatalyst='20,40', WinUI='20,40'}"
+        VerticalOptions="CenterAndExpand"
+        Spacing="{OnPlatform iOS=20, Android=15, MacCatalyst=20, WinUI=20}">
+
+        <Label Text="Add New Currency"
+               FontSize="{OnIdiom Phone=24, Tablet=30, Desktop=36}"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
+               TextColor="Black"
+               Margin="0,0,0,20" />
+
+        <Entry x:Name="currencyNameEntry"
+               Placeholder="Currency Name"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+               HorizontalOptions="Center" />
+
+
+        <Entry x:Name="symbolEntry"
+               Placeholder="Symbol"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+               HorizontalOptions="Center" />
+
+        <Entry x:Name="exchangeRateEntry"
+               Placeholder="Exchange Rate"
+               Keyboard="Numeric"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+               HorizontalOptions="Center" />
+
+        <Entry x:Name="codeCurrencyEntry"
+               Placeholder="Code Currency"
+               MaxLength="3"
+               Keyboard="Text"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}"
+               HorizontalOptions="Center" />
+
+        <StackLayout Orientation="Horizontal"
+             HorizontalOptions="Center">
+            <CheckBox x:Name="BaseCurrencyCheckbox" />
+            <Label Text="Is Base Currency"
+           VerticalOptions="Center" />
+        </StackLayout>
+
+        <Button Text="Add Currency"
+                Clicked="OnAddAccountClicked"
+                WidthRequest="{OnPlatform iOS=200, Android=200, MacCatalyst=200, WinUI=200}"
+                HorizontalOptions="Center" />
+
+        <Label x:Name="MessageLabel"
+               TextColor="Red"
+               HorizontalOptions="Center"
+               WidthRequest="{OnPlatform iOS=300, Android=250, MacCatalyst=300, WinUI=300}" />
+    </StackLayout>
+</ContentPage>
