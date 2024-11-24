@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ArtbavialFinance.Models;
 using ArtBavialMyFinance.Models;
+using ArtBavialMyFinance.Data.Models;
 
 namespace ArtBavialMyFinance.Data
 {
@@ -11,14 +12,14 @@ namespace ArtBavialMyFinance.Data
 		}
 
 		public AppDbContext(DbContextOptions<AppDbContext> options)
-			: base(options)
-		{
-		}
+			: base(options){}
 
 		public DbSet<User> Users { get; set; }
 		public DbSet<Account> Accounts { get; set; }
 		public DbSet<Transaction> Transactions { get; set; }
+		public DbSet<OperationCategory> OperationCategories { get; set; }
 		public DbSet<Currency> Currencies { get; set; }
+		public DbSet<Counterparty> Counterparties { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
@@ -28,13 +29,13 @@ namespace ArtBavialMyFinance.Data
 			}
 		}
 
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<User>()
 				.Property(u => u.Id)
 				.ValueGeneratedOnAdd();
 
-			// Конфигурация внешних ключей с поведением ON DELETE NO ACTION
 			modelBuilder.Entity<Account>()
 				.HasOne(a => a.User)
 				.WithMany(u => u.Accounts)
@@ -53,7 +54,22 @@ namespace ArtBavialMyFinance.Data
 				.HasForeignKey(t => t.UserId)
 				.OnDelete(DeleteBehavior.NoAction);
 
-			// Конфигурация типов данных decimal
+			modelBuilder.Entity<Transaction>()
+				.Property(t => t.Type)
+				.HasConversion<string>();
+
+			modelBuilder.Entity<OperationCategory>()
+				.HasOne(oc => oc.User)
+				.WithMany(u => u.OperationCategories)
+				.HasForeignKey(oc => oc.UserId)
+				.OnDelete(DeleteBehavior.NoAction);
+
+			modelBuilder.Entity<Counterparty>()
+				.HasOne(cp => cp.User)
+				.WithMany(u => u.Counterparties)
+				.HasForeignKey(cp => cp.UserId)
+				.OnDelete(DeleteBehavior.NoAction);
+
 			modelBuilder.Entity<Account>()
 				.Property(a => a.Balance)
 				.HasColumnType("decimal(18, 2)");
@@ -66,5 +82,6 @@ namespace ArtBavialMyFinance.Data
 				.Property(t => t.Amount)
 				.HasColumnType("decimal(18, 2)");
 		}
+
 	}
 }

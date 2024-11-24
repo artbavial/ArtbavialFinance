@@ -3,20 +3,21 @@ using System.Linq;
 using Microsoft.Maui.Controls;
 using ArtBavialMyFinance.Models;
 using ArtBavialMyFinance.Services;
+using ArtbavialFinance.Models;
 
 namespace ArtbavialFinance.Pages
 {
 	public partial class ManageCurrenciesPage : ContentPage
 	{
 		private readonly FinanceManager _financeManager;
-		private readonly long _currentUserId;
+		private readonly User _currentUser;
 		private Currency _selectedCurrency;
 
-		public ManageCurrenciesPage(FinanceManager financeManager, long currentUserId)
+		public ManageCurrenciesPage(FinanceManager financeManager, User user)
 		{
 			InitializeComponent();
 			_financeManager = financeManager;
-			_currentUserId = currentUserId;
+			_currentUser = user;
 
 			LoadCurrencies();
 			LoadBaseCurrencies();
@@ -24,12 +25,12 @@ namespace ArtbavialFinance.Pages
 
 		private void LoadCurrencies()
 		{
-			CurrencyListView.ItemsSource = _financeManager.GetUserCurrencies(_currentUserId);
+			CurrencyListView.ItemsSource = _financeManager.GetUserCurrencies(_currentUser.Id);
 		}
 
 		private void LoadBaseCurrencies()
 		{
-			BaseCurrencyPicker.ItemsSource = _financeManager.GetUserCurrencies(_currentUserId).Where(c => c.IsBaseCurrency).ToList();
+			BaseCurrencyPicker.ItemsSource = _financeManager.GetUserCurrencies(_currentUser.Id).Where(c => c.IsBaseCurrency).ToList();
 		}
 
 		private void OnAddCurrencyClicked(object sender, EventArgs e)
@@ -53,10 +54,10 @@ namespace ArtbavialFinance.Pages
 				Symbol = symbol,
 				ExchangeRate = exchangeRate,
 				IsBaseCurrency = false,
-				UserId = _currentUserId
+				UserId = _currentUser.Id
 			};
 
-			_financeManager.AddCurrencyToUser(_currentUserId, newCurrency);
+			_financeManager.AddCurrencyToUser(_currentUser.Id, newCurrency);
 
 			LoadCurrencies();
 
@@ -78,7 +79,7 @@ namespace ArtbavialFinance.Pages
 				CurrencyNameEntry.Text = _selectedCurrency.Name;
 				CurrencySymbolEntry.Text = _selectedCurrency.Symbol;
 				ExchangeRateEntry.Text = _selectedCurrency.ExchangeRate.ToString();
-				BaseCurrencyPicker.SelectedItem = _financeManager.GetUserCurrencies(_currentUserId).FirstOrDefault(c => c.Id == _selectedCurrency.UserId && c.IsBaseCurrency);
+				BaseCurrencyPicker.SelectedItem = _financeManager.GetUserCurrencies(_currentUser.Id).FirstOrDefault(c => c.Id == _selectedCurrency.UserId && c.IsBaseCurrency);
 
 				SaveChangesButton.IsVisible = true;
 			}

@@ -16,7 +16,7 @@
     <ShellContent
         Title="Currencies"
         ContentTemplate="{DataTemplate pages:ManageCurrenciesPage}"
-        Route="currencies" />
+        Route="Currencies" />
 
 </Shell>
 

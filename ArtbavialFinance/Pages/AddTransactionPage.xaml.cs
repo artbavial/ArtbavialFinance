@@ -1,4 +1,5 @@
 using System;
+using ArtbavialFinance.Models;
 using ArtBavialMyFinance.Data;
 using ArtBavialMyFinance.Data.Models;
 using ArtBavialMyFinance.Models;
@@ -10,52 +11,77 @@ namespace ArtbavialFinance.Pages
 	public partial class AddTransactionPage : ContentPage
 	{
 		private readonly AppDbContext _dbContext;
-		public AddTransactionPage(AppDbContext dbContext)
+		private User currentUser;
+
+		public AddTransactionPage(AppDbContext dbContext, User user)
 		{
 			InitializeComponent();
 			_dbContext = dbContext;
+			currentUser = user; // Установка текущего пользователя
+			
 		}
 
-		private void OnSaveTransactionClicked(object sender, EventArgs e)
+		protected override async void OnAppearing()
 		{
-			// Получаем введенные данные
-			decimal amount = decimal.Parse(AmountEntry.Text);
-			string transactionType = (string)TransactionTypePicker.SelectedItem;
-			string description = DescriptionEditor.Text;
+			base.OnAppearing();
+			await LoadAccounts();
+			LoadTransactionTypes();
+		}
 
-			// Валидация данных
-			if (amount <= 0)
+		private async Task LoadAccounts()
+		{
+			if (_dbContext != null)
 			{
-				DisplayAlert("Error", "Amount must be greater than zero.", "OK");
-				return;
+				var accounts = await _dbContext.Accounts
+											   .Where(a => a.UserId == currentUser.Id) // Фильтруем счета по текущему пользователю
+											   .Include(a => a.User) // Используем Include для загрузки связанных данных
+											   .ToListAsync();
+				AccountPicker.ItemsSource = accounts;
+				AccountPicker.ItemDisplayBinding = new Binding("Name");
 			}
-			if (transactionType == null)
+			else
 			{
-				DisplayAlert("Error", "Please select a transaction type.", "OK");
-				return;
+				await DisplayAlert("Ошибка", "Контекст базы данных не инициализирован.", "OK");
 			}
-			if (string.IsNullOrWhiteSpace(description))
+		}
+
+		private void LoadTransactionTypes()
+		{
+			// Заполнение Picker данными из enum TransactionType
+			TransactionTypePicker.ItemsSource = Enum.GetValues(typeof(TransactionType)).Cast<TransactionType>().ToList();
+		}
+
+		private async void OnSaveTransactionClicked(object sender, EventArgs e)
+		{
+			try
 			{
-				DisplayAlert("Error", "Description cannot be empty.", "OK");
-				return;
+				var amount = decimal.Parse(AmountEntry.Text);
+				var selectedAccount = (Account)AccountPicker.SelectedItem;
+				var transactionType = (TransactionType)TransactionTypePicker.SelectedItem;
+				var description = DescriptionEditor.Text;
+
+				var transaction = new Transaction
+				{
+					Amount = amount,
+					Date = DateTime.Now,
+					Type = transactionType,
+					Description = description,
+					AccountId = selectedAccount.Id,
+					UserId = currentUser.Id // Установите UserId для новой транзакции
+				};
+
+				_dbContext.Transactions.Add(transaction);
+				await _dbContext.SaveChangesAsync();
+
+				await DisplayAlert("Success", "Transaction added successfully!", "OK");
+
+				// Возврат на предыдущую страницу
+				await Navigation.PopAsync();
 			}
-
-			// Создаем и сохраняем новую транзакцию (пример)
-			Transaction newTransaction = new Transaction
+			catch (Exception ex)
 			{
-				Amount = amount,
-				Type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionType),
-				Description = description,
-				Date = DateTime.Now
-			};
-
-			// Сохраните транзакцию в вашей модели данных
-			// Например:
-			// FinanceManager.AddTransaction(newTransaction);
-
-			// Показываем подтверждение и возвращаемся на предыдущую страницу
-			DisplayAlert("Success", "Transaction saved successfully.", "OK");
-			Navigation.PopAsync();
+				await DisplayAlert("Error", ex.Message, "OK");
+			}
 		}
 	}
 }

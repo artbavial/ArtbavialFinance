@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArtBavialMyFinance.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241124150828_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241124200749_InitMigration")]
+    partial class InitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,56 @@ namespace ArtBavialMyFinance.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ArtBavialMyFinance.Data.Models.Counterparty", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Counterparties");
+                });
+
+            modelBuilder.Entity("ArtBavialMyFinance.Data.Models.OperationCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OperationCategories");
+                });
 
             modelBuilder.Entity("ArtBavialMyFinance.Models.Account", b =>
                 {
@@ -69,10 +119,6 @@ namespace ArtBavialMyFinance.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CodeCurrency")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -115,6 +161,9 @@ namespace ArtBavialMyFinance.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<long>("CounterpartyId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -122,8 +171,15 @@ namespace ArtBavialMyFinance.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsCounterpartyRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("OperationCategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
@@ -131,6 +187,10 @@ namespace ArtBavialMyFinance.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("CounterpartyId");
+
+                    b.HasIndex("OperationCategoryId");
 
                     b.HasIndex("UserId");
 
@@ -160,6 +220,28 @@ namespace ArtBavialMyFinance.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ArtBavialMyFinance.Data.Models.Counterparty", b =>
+                {
+                    b.HasOne("ArtbavialFinance.Models.User", "User")
+                        .WithMany("Counterparties")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ArtBavialMyFinance.Data.Models.OperationCategory", b =>
+                {
+                    b.HasOne("ArtbavialFinance.Models.User", "User")
+                        .WithMany("OperationCategories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ArtBavialMyFinance.Models.Account", b =>
@@ -200,6 +282,18 @@ namespace ArtBavialMyFinance.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ArtBavialMyFinance.Data.Models.Counterparty", "Counterparty")
+                        .WithMany()
+                        .HasForeignKey("CounterpartyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArtBavialMyFinance.Data.Models.OperationCategory", "OperationCategory")
+                        .WithMany()
+                        .HasForeignKey("OperationCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ArtbavialFinance.Models.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
@@ -208,6 +302,10 @@ namespace ArtBavialMyFinance.Data.Migrations
 
                     b.Navigation("Account");
 
+                    b.Navigation("Counterparty");
+
+                    b.Navigation("OperationCategory");
+
                     b.Navigation("User");
                 });
 
@@ -215,7 +313,11 @@ namespace ArtBavialMyFinance.Data.Migrations
                 {
                     b.Navigation("Accounts");
 
+                    b.Navigation("Counterparties");
+
                     b.Navigation("Currencies");
+
+                    b.Navigation("OperationCategories");
 
                     b.Navigation("Transactions");
                 });

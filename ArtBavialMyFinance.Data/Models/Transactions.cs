@@ -42,6 +42,18 @@ namespace ArtBavialMyFinance.Models
 		/// </summary>
 		public TransactionType Type { get; set; }
 
+		public long OperationCategoryId { get; set; }
+		public OperationCategory OperationCategory { get; set; }
+
+		public long CounterpartyId { get; set; } 
+		// Связь с контрагентом
+		public Counterparty Counterparty { get; set; }
+
+		/// <summary>
+		/// Флаг, указывает требуется ли указание контрагента
+		/// </summary>
+		public bool IsCounterpartyRequired { get; set; } 
+
 		/// <summary>
 		/// Описание транзакции
 		/// </summary>
@@ -57,4 +69,5 @@ namespace ArtBavialMyFinance.Models
 		/// </summary>
 		public User User { get; set; }
 	}
+
 }

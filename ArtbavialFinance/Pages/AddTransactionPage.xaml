@@ -15,19 +15,16 @@
                Keyboard="Numeric"
                x:Name="AmountEntry" />
 
+        <!-- Выбор счета -->
+        <Picker Title="Select Account"
+                x:Name="AccountPicker">
+            <!-- Данные будут загружены в коде позади -->
+        </Picker>
+
         <!-- Выбор типа транзакции -->
         <Picker Title="Select Transaction Type"
                 x:Name="TransactionTypePicker">
-            <Picker.ItemsSource>
-                <x:Array Type="{x:Type x:String}">
-                    <x:String>Income</x:String>
-                    <x:String>Expense</x:String>
-                    <x:String>Transfer</x:String>
-                    <x:String>Investment</x:String>
-                    <x:String>Withdrawal</x:String>
-                    <x:String>Deposit</x:String>
-                </x:Array>
-            </Picker.ItemsSource>
+            <!-- Данные будут загружены в коде позади -->
         </Picker>
 
         <!-- Поле для ввода описания -->

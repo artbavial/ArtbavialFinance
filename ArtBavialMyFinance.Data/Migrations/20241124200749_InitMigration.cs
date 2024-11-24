@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ArtBavialMyFinance.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,12 +27,31 @@ namespace ArtBavialMyFinance.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Counterparties",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Counterparties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Counterparties_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Currencies",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CodeCurrency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Symbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -45,6 +64,26 @@ namespace ArtBavialMyFinance.Data.Migrations
                     table.PrimaryKey("PK_Currencies", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Currencies_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OperationCategories",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OperationCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OperationCategories_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -88,7 +127,10 @@ namespace ArtBavialMyFinance.Data.Migrations
                     AccountId = table.Column<long>(type: "bigint", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OperationCategoryId = table.Column<long>(type: "bigint", nullable: false),
+                    CounterpartyId = table.Column<long>(type: "bigint", nullable: false),
+                    IsCounterpartyRequired = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -99,6 +141,18 @@ namespace ArtBavialMyFinance.Data.Migrations
                         name: "FK_Transactions_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Counterparties_CounterpartyId",
+                        column: x => x.CounterpartyId,
+                        principalTable: "Counterparties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Transactions_OperationCategories_OperationCategoryId",
+                        column: x => x.OperationCategoryId,
+                        principalTable: "OperationCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -119,14 +173,34 @@ namespace ArtBavialMyFinance.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Counterparties_UserId",
+                table: "Counterparties",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Currencies_UserId",
                 table: "Currencies",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OperationCategories_UserId",
+                table: "OperationCategories",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_AccountId",
                 table: "Transactions",
                 column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_CounterpartyId",
+                table: "Transactions",
+                column: "CounterpartyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_OperationCategoryId",
+                table: "Transactions",
+                column: "OperationCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_UserId",
@@ -142,6 +216,12 @@ namespace ArtBavialMyFinance.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "Counterparties");
+
+            migrationBuilder.DropTable(
+                name: "OperationCategories");
 
             migrationBuilder.DropTable(
                 name: "Currencies");

@@ -1,4 +1,5 @@
-﻿using ArtBavialMyFinance.Models;
+﻿using ArtBavialMyFinance.Data.Models;
+using ArtBavialMyFinance.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,12 +19,16 @@ namespace ArtbavialFinance.Models
 		public List<Account> Accounts { get; set; }
 		public List<Transaction> Transactions { get; set; }
 		public List<Currency> Currencies { get; set; }
+		public List<OperationCategory> OperationCategories { get; set; }
+		public List<Counterparty> Counterparties { get; set; }
 
 		public User()
 		{
 			Accounts = new List<Account>();
 			Transactions = new List<Transaction>();
 			Currencies = new List<Currency>();
+			OperationCategories = new List<OperationCategory>();
+			Counterparties = new List<Counterparty>();
 		}
 	}
 }

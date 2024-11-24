@@ -7,7 +7,7 @@
         <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="SizeProportional">
             <StackLayout Padding="10" Spacing="20">
                 <!-- Заголовок -->
-                <Label Text="Welcome to Your Dashboard"
+                <Label Text="Welcome to Your ArtBavial Finance"
                        FontSize="24"
                        HorizontalOptions="Center"
                        VerticalOptions="Start"
@@ -29,13 +29,15 @@
                 </Frame>
 
                 <!-- Последние транзакции -->
-                <Frame BackgroundColor="White" BorderColor="Black" CornerRadius="10" Padding="20">
+                <Frame BackgroundColor="Silver" BorderColor="Black" CornerRadius="10" Padding="20">
                     <StackLayout>
-                        <Label Text="Recent Transactions"
-                               FontSize="18"
-                               TextColor="Black" />
-                        <ListView x:Name="TransactionsListView">
-                            <!-- Здесь будут отображаться последние транзакции -->
+                        <Label Text="Recent Transactions" FontSize="18" TextColor="Black" />
+                        <ListView x:Name="TransactionsListView" ItemsSource="{Binding Transactions}" IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextCell TextColor="Black" Text="{Binding Description}" Detail="{Binding Amount, StringFormat='Amount: {0:C}'}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                         </ListView>
                     </StackLayout>
                 </Frame>
@@ -71,7 +73,7 @@
                             CommandParameter="settings"
                             Style="{StaticResource DefaultButtonStyle}" />
                     <Button Text="Currencies"
-                            Command="{Binding NavigateCommand}"
+                            Clicked="OnShowCurrenciesClicked"
                             CommandParameter="Currencies"
                             Style="{StaticResource DefaultButtonStyle}" />
                 </StackLayout>

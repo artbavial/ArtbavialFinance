@@ -7,82 +7,153 @@ using ArtBavialMyFinance.Data.Models;
 using ArtBavialMyFinance.Models;
 using ArtBavialMyFinance.Data;
 using ArtbavialFinance.Models;
+using System.Collections.ObjectModel;
 
 namespace ArtbavialFinance.Pages
 {
 	public partial class AddCurrencyPage : ContentPage
 	{
 		private readonly AppDbContext _dbContext;
-		private User currentUser;
+		private User _currentUser;
+		public ObservableCollection<Currency> Currencies { get; set; }
 
 		public AddCurrencyPage(AppDbContext dbContext, User user)
 		{
 			_dbContext = dbContext;
-			currentUser = user; // Установка текущего пользователя
+			_currentUser = user;
 			InitializeComponent();
+			Currencies = new ObservableCollection<Currency>();
+			CurrencyCollectionView.ItemsSource = Currencies;
+			LoadCurrencies();
 		}
 
+		private async Task LoadCurrencies()
+		{
+			var currencies = await _dbContext.Currencies
+											 .Where(c => c.UserId == _currentUser.Id)
+											 .ToListAsync();
+
+			foreach (var currency in currencies)
+			{
+				Currencies.Add(currency);
+			}
+		}
 
 		private async void OnAddCurrencyClicked(object sender, EventArgs e)
 		{
-			var currencyName = currencyNameEntry.Text;
-			var currencySymbol = symbolEntry.Text;
-			var exchangeRate = decimal.Parse(exchangeRateEntry.Text);
-			var codeCurrency = codeCurrencyEntry.Text;
-			var isBaseCurrency = BaseCurrencyCheckbox.IsChecked;
+			string currencyName = await DisplayPromptAsync("Add Currency", "Enter currency name:");
+			string currencySymbol = await DisplayPromptAsync("Add Currency", "Enter currency symbol:");
+			string exchangeRateString = await DisplayPromptAsync("Add Currency", "Enter exchange rate:");
+			string codeCurrency = await DisplayPromptAsync("Add Currency", "Enter code currency:");
+			bool isBaseCurrency = await DisplayAlert("Add Currency", "Is this the base currency?", "Yes", "No");
 
-			// Проверка наличия валюты в базе данных
-			var existingCurrency = await _dbContext.Currencies
-												   .Where(c => c.UserId == currentUser.Id && (c.CodeCurrency == codeCurrency || c.Symbol == currencySymbol))
-												   .FirstOrDefaultAsync();
-
-			if (existingCurrency != null)
+			if (decimal.TryParse(exchangeRateString, out decimal exchangeRate))
 			{
-				await DisplayAlert("Error", $"Такая валюта уже существует! Ее название: {existingCurrency.Name}", "OK");
-				return;
-			}
+				// Проверка наличия валюты в базе данных
+				var existingCurrency = await _dbContext.Currencies
+													   .Where(c => c.UserId == _currentUser.Id && (c.CodeCurrency == codeCurrency || c.Symbol == currencySymbol))
+													   .FirstOrDefaultAsync();
 
-			// Проверка наличия базовой валюты
-			if (isBaseCurrency)
-			{
-				var existingBaseCurrency = await _dbContext.Currencies
-														   .Where(c => c.UserId == currentUser.Id && c.IsBaseCurrency)
-														   .FirstOrDefaultAsync();
-
-				if (existingBaseCurrency != null)
+				if (existingCurrency != null)
 				{
-					bool answer = await DisplayAlert("Warning",
-													 $"Базовая валюта уже существует: {existingBaseCurrency.Name}. Вы хотите заменить её на новую базовую валюту?",
-													 "Да",
-													 "Нет");
+					await DisplayAlert("Error", $"Такая валюта уже существует! Ее название: {existingCurrency.Name}", "OK");
+					return;
+				}
 
-					if (!answer)
+				// Проверка наличия базовой валюты
+				if (isBaseCurrency)
+				{
+					var existingBaseCurrency = await _dbContext.Currencies
+															   .Where(c => c.UserId == _currentUser.Id && c.IsBaseCurrency)
+															   .FirstOrDefaultAsync();
+
+					if (existingBaseCurrency != null)
 					{
-						return;
+						bool answer = await DisplayAlert("Warning",
+														 $"Базовая валюта уже существует: {existingBaseCurrency.Name}. Вы хотите заменить её на новую базовую валюту?",
+														 "Да",
+														 "Нет");
+
+						if (!answer)
+						{
+							return;
+						}
+
+						// Обновление текущей базовой валюты, чтобы она перестала быть базовой
+						existingBaseCurrency.IsBaseCurrency = false;
+						_dbContext.Currencies.Update(existingBaseCurrency);
+					}
+				}
+
+				var currency = new Currency
+				{
+					Name = currencyName,
+					Symbol = currencySymbol,
+					ExchangeRate = exchangeRate,
+					CodeCurrency = codeCurrency,
+					IsBaseCurrency = isBaseCurrency,
+					UserId = _currentUser.Id
+				};
+
+				_dbContext.Currencies.Add(currency);
+				await _dbContext.SaveChangesAsync();
+
+				Currencies.Add(currency);
+
+				await DisplayAlert("Success", "Currency added successfully!", "OK");
+			}
+			else
+			{
+				await DisplayAlert("Error", "Invalid exchange rate", "OK");
+			}
+		}
+
+		private async void OnCurrencySelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var selectedCurrency = e.CurrentSelection.FirstOrDefault() as Currency;
+			if (selectedCurrency != null)
+			{
+				string newName = await DisplayPromptAsync("Edit Currency", "Enter new currency name:", initialValue: selectedCurrency.Name);
+				string newSymbol = await DisplayPromptAsync("Edit Currency", "Enter new currency symbol:", initialValue: selectedCurrency.Symbol);
+				string newExchangeRateString = await DisplayPromptAsync("Edit Currency", "Enter new exchange rate:", initialValue: selectedCurrency.ExchangeRate.ToString());
+				string newCodeCurrency = await DisplayPromptAsync("Edit Currency", "Enter new code currency:", initialValue: selectedCurrency.CodeCurrency);
+				bool newIsBaseCurrency = await DisplayAlert("Edit Currency", "Is this the base currency?", "Yes", "No");
+
+				if (decimal.TryParse(newExchangeRateString, out decimal newExchangeRate))
+				{
+					selectedCurrency.Name = newName;
+					selectedCurrency.Symbol = newSymbol;
+					selectedCurrency.ExchangeRate = newExchangeRate;
+					selectedCurrency.CodeCurrency = newCodeCurrency;
+					selectedCurrency.IsBaseCurrency = newIsBaseCurrency;
+
+					if (selectedCurrency.IsBaseCurrency)
+					{
+						var existingBaseCurrency = await _dbContext.Currencies
+																   .Where(c => c.UserId == selectedCurrency.UserId && c.IsBaseCurrency && c.Id != selectedCurrency.Id)
+																   .FirstOrDefaultAsync();
+
+						if (existingBaseCurrency != null)
+						{
+							existingBaseCurrency.IsBaseCurrency = false;
+							_dbContext.Currencies.Update(existingBaseCurrency);
+						}
 					}
 
-					// Обновление текущей базовой валюты, чтобы она перестала быть базовой
-					existingBaseCurrency.IsBaseCurrency = false;
-					_dbContext.Currencies.Update(existingBaseCurrency);
+					_dbContext.Currencies.Update(selectedCurrency);
+					await _dbContext.SaveChangesAsync();
+
+					// Обновление отображаемого списка
+					Currencies.Clear();
+					await LoadCurrencies();
+
+					await DisplayAlert("Success", "Currency updated successfully!", "OK");
+				}
+				else
+				{
+					await DisplayAlert("Error", "Invalid exchange rate", "OK");
 				}
 			}
-
-			var currency = new Currency
-			{
-				Name = currencyName,
-				Symbol = currencySymbol,
-				ExchangeRate = exchangeRate,
-				CodeCurrency = codeCurrency,
-				IsBaseCurrency = isBaseCurrency,
-				UserId = currentUser.Id // Установите UserId для новой валюты
-			};
-
-			_dbContext.Currencies.Add(currency);
-			await _dbContext.SaveChangesAsync();
-
-			await DisplayAlert("Success", "Currency added successfully!", "OK");
-			// Возврат на главную страницу
-			await Navigation.PopAsync();
 		}
 	}
 }
